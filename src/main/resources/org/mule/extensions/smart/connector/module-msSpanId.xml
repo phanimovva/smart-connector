@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="msSpanId Smart Connector" category="SELECT"
+	prefix="module-msspanid"
+	doc:description="This module relies in runtime provided components"
+
+	xmlns="http://www.mulesoft.org/schema/mule/module"
+	xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+	xsi:schemaLocation="
+           http://www.mulesoft.org/schema/mule/module http://www.mulesoft.org/schema/mule/module/current/mule-module.xsd
+           http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+           http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+           http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<operation name="set-spanId-instance-dw"
+		doc:description="Appends SpanId to the Trace Id">
+		<parameters>
+			<parameter name="traceId" type="string" />
+			<parameter name="instance" type="string" />
+		</parameters>
+		<body>
+			<validation:is-not-null doc:name="Is not null"
+				doc:id="ae24507a-140e-4c11-bd83-130503d78666"
+				value="#[vars.traceId]"
+				message="Trace ID is null or not passed in the input." />
+				<validation:is-not-null doc:name="Is not null"
+				doc:id="ae24507a-140e-4c11-bd83-130503d78666"
+				value="#[vars.instance]"
+				message="Instance is null or not passed in the input." />
+			<!-- <mule:logger level="INFO" doc:name="Log Trace Id" message="Logging 
+				trace Id from gateway headers : #[vars.'traceId' ]" /> -->
+
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[
+%dw 2.0
+output application/json
+var traceIdleng = (sizeOf(vars.traceid) -1) as Number
+var newSpanId = vars.traceId ++ ":" ++ (uuid() replace "-" with "")[1 to traceIdleng] ++ ":0:" ++ vars.instance
+---
+newSpanId
+                    ]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<!-- <mule:logger level="INFO" doc:name="Log new Trace Id" doc:id="ce986698-1e27-4323-8931-63adbacd2544" 
+				message="Generated new trace Id for downstream idP-ms calls : #[vars.'msTraceId' 
+				]" /> -->
+		</body>
+		<output type="string" doc:description="Payload's output" />
+	</operation>
+	<operation name="set-spanId-dw"
+		doc:description="Appends SpanId to the Trace Id">
+		<parameters>
+			<parameter name="traceId" type="string" />
+		</parameters>
+		<body>
+		<validation:is-not-null doc:name="Is not null"
+				doc:id="ae24507a-140e-4c11-bd83-130503d78666"
+				value="#[vars.traceId]"
+				message="Trace ID is null or not passed in the input." />
+			<!-- <mule:logger level="INFO" doc:name="Log Trace Id" message="Logging 
+				trace Id from gateway headers : #[vars.'traceId' ]" /> -->
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[
+%dw 2.0
+output application/json
+var traceIdleng = (sizeOf(vars.traceid) -1) as Number
+var newSpanId = vars.traceId ++ ":" ++ (uuid() replace "-" with "")[1 to traceIdleng]
+---
+newSpanId
+                    ]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<!-- <mule:logger level="INFO" doc:name="Log new Trace Id" doc:id="ce986698-1e27-4323-8931-63adbacd2544" 
+				message="Generated new trace Id for downstream idP-ms calls : #[vars.'msTraceId' 
+				]" /> -->
+		</body>
+		<output type="string" doc:description="Payload's output" />
+		<errors>
+			<error type="string" />
+		</errors>
+	</operation>
+
+</module>

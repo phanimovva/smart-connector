@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.mule.extension</groupId>
+	<artifactId>unique-spanid-gen</artifactId>
+	<packaging>mule-extension</packaging>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<name>unique-spanid-gen</name>
+	<description>A Mule extension done with pure Mule DSL that depends in the runtime operations (set-payload, set-variable, etc.)</description>
+
+
+	<properties>
+		<mule.version>4.1.1</mule.version>
+		<mule.extensions.maven.plugin.version>1.1.5</mule.extensions.maven.plugin.version>
+		<maven.resources.version>3.2.0</maven.resources.version>
+		<mule.module.validation.version>1.4.3</mule.module.validation.version>
+	</properties>
+
+
+	<dependencies>
+		<!--Needed to discover the 'xml-based' XmlExtensionLoader for smart connectors -->
+		<dependency>
+			<groupId>org.mule.runtime</groupId>
+			<artifactId>mule-module-extensions-xml-support</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.mule.runtime.modules</groupId>
+			<artifactId>mule-module-spring-config-ee</artifactId>
+			<version>${mule.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-validation-module</artifactId>
+            <version>${mule.module.validation.version}</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>${maven.resources.version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.mule.runtime.plugins</groupId>
+				<artifactId>mule-extensions-maven-plugin</artifactId>
+				<version>${mule.extensions.maven.plugin.version}</version>
+				<extensions>true</extensions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
